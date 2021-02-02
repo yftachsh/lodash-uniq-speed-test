@@ -21,7 +21,24 @@ class Logger {
 
     timestamp = () => {
         const current = new Date();
-        return `${current.getHours()}:${current.getMinutes()}:${current.getSeconds()}.${current.getMilliseconds()}`;
+
+        const hours = current.getHours().toString().length > 1
+        ? current.getHours().toString()
+        : `0${current.getHours().toString()}`;
+
+        const minutes = current.getMinutes().toString().length > 1
+        ? current.getMinutes().toString()
+        : `0${current.getMinutes().toString()}`;
+
+        const seconds = current.getSeconds().toString().length > 1
+        ? current.getSeconds().toString()
+        : `0${current.getSeconds().toString()}`;
+
+        const milliseconds = current.getMilliseconds().toFixed(3).toString().length > 1
+        ? current.getMilliseconds().toString()
+        : `0${current.getMilliseconds().toString()}`;
+
+        return `${hours}:${minutes}:${seconds}.${milliseconds}`;
     }
 
     success = message => {

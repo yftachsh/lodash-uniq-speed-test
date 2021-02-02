@@ -43,7 +43,6 @@ const customUnique = array => {
 (async () => {
     const response = await axios.get('https://jsonplaceholder.typicode.com/comments');
     const testData = new Array(1000).fill(0).reduce(array => [...array, ...response.data], []);
-    console.log(testData.length);
 
     const logger = new Logger();
 
@@ -53,6 +52,8 @@ const customUnique = array => {
         lodashUniqWithClean: () => lodashUniqWithClean(testData),
         customUnique: () => customUnique(testData),
     }
+
+    logger.info(`Running methods over a mock array of ${testData.length} elements.`);
 
     const testMethodNames = Object.keys(tests);
 

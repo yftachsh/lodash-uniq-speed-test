@@ -6,7 +6,7 @@ class Logger {
             successFinal: colors.rainbow,
             success: colors.green,
             error: colors.red,
-            info: colors.blue
+            info: colors.dim,
         }
     }
 

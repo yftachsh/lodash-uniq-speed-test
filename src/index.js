@@ -6,30 +6,33 @@ const unique = require('./unique');
 const Logger = require('../utils/logger');
 const Timer = require('../utils/timer');
 
-const lodashUniqWithStraightCmp = array => {
-    uniqWith(array, (first, second) => 
+const lodashUniqWithStraightCmp = array =>
+    uniqWith(array, (first, second) =>
         first.postId === second.postId
         && first.id === second.id
         && first.name === second.name
         && first.email === second.email
         && first.body === second.body
     );
-}
 
-const lodashUniqWithIterateCmp = array => {
-    uniqWith(array, (first, second) => 
+
+const lodashUniqWithIterateCmp = array =>
+    uniqWith(array, (first, second) =>
         Object.keys(first)
-        .every(key => first[key] === second[key])
+            .every(key => first[key] === second[key])
     )
-}
 
-const lodashUniqWithClean = array => {
+
+const lodashUniqWithClean = array =>
     uniqWith(array);
-}
 
-const customUnique = array => {
+
+const customUnique = array =>
     unique(array);
-}
+
+
+const seperator = () =>
+    console.log('-'.repeat(80));
 
 /**
  * Report results for an array of 500,000 elements:
@@ -41,10 +44,11 @@ const customUnique = array => {
  * 
  */
 (async () => {
-    const response = await axios.get('https://jsonplaceholder.typicode.com/comments');
-    const testData = new Array(1000).fill(0).reduce(array => [...array, ...response.data], []);
-
+    seperator();
     const logger = new Logger();
+    const response = await axios.get('https://jsonplaceholder.typicode.com/comments');
+    logger.info(`Retrieved ${response.data.length} elements from mock API`);
+    const testData = new Array(1000).fill(0).reduce(array => [...array, ...response.data], []);
 
     const tests = {
         lodashUniqWithStraightCmp: () => lodashUniqWithStraightCmp(testData),
@@ -57,7 +61,7 @@ const customUnique = array => {
 
     const testMethodNames = Object.keys(tests);
 
-    console.log('-'.repeat(50));
+    seperator();
 
     testMethodNames.forEach(testMethodName => {
         testMethod = tests[testMethodName];
@@ -67,16 +71,22 @@ const customUnique = array => {
         try {
             logger.info(`running ${testMethodName}`)
             timer.start();
-            testMethod();
+            const result = testMethod();
+            if (
+                (!Array.isArray(result)) ||
+                (Array.isArray(result) && result.length !== response.data.length)
+            ) {
+                throw new Error(`Method ${testMethodName} did not successfully execute the operation.`);
+            }
             logger.success(`${testMethodName} successfully finished`);
             return true;
-        } catch(error) {
+        } catch (error) {
             logger.error(`${testMethodName} failed`)
             return false;
         } finally {
             timer.end();
             logger.info(`${testMethodName} ran for ${timer.finalize()} milliseconds`);
-            console.log('-'.repeat(50));
+            seperator();
         }
     });
 
